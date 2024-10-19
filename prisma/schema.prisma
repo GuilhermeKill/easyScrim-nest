@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgres"
+  url      = "postgresql://postgres:docker@localhost:5432/nest-clean"
 }
 
 model User {
