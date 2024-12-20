@@ -20,6 +20,14 @@ enum Role {
   COACH
 }
 
+enum Lane {
+  TOP
+  JUNGLE
+  MID
+  ADC
+  SUPORTE
+}
+
 enum Elo {
   Ferro
   Bronze
@@ -41,41 +49,44 @@ model User {
   password           String
   player_description String
   riot_id            String
-  lane               String
+  lane               Lane?
+  elo                Elo
   riot_nick_name     String
-  team_id            String
   role               Role
 
-  teamUsers Team_User[]
+  teamInvites TeamInvite[]
 
   @@map("users")
 }
 
 model Team {
-  id           Int    @id @default(autoincrement())
-  uu_id        String @default(uuid())
-  team_name    String
+  id         Int    @id @default(autoincrement())
+  uu_id      String @default(uuid())
+  team_name  String
+  elo_team   Elo
+  team_owner Int
 
-  top_laner_id String?
-  jg_laner_id  String?
-  mid_laner_id String?
-  adc_laner_id String?
-  sup_laner_id String?
-  coach_id     String?
-  elo_team     Elo
+  topLanerId Int?
+  jgLanerId  Int?
+  midLanerId Int?
+  adcLanerId Int?
+  supLanerId Int?
+  coachId    Int?
 
-  teamUsers Team_User[]
+  teamInvites TeamInvite[]
 
   @@map("teams")
 }
 
-model Team_User {
-  id      Int @id @default(autoincrement())
-  user_id Int
-  team_id Int
+model TeamInvite {
+  id    Int    @id @default(autoincrement())
+  uu_id String @default(uuid())
 
-  User   User? @relation(fields: [userId], references: [id])
-  userId Int?
-  Team   Team? @relation(fields: [teamId], references: [id])
-  teamId Int?
+  mensage     String?
+  lane        Lane
+  recipientId Int
+  teamId      Int
+
+  recipient User @relation(fields: [recipientId], references: [id])
+  team      Team @relation(fields: [teamId], references: [id])
 }

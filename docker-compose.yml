@@ -10,6 +10,8 @@ services:
       POSTGRES_USER: gui
       POSTGRES_PASSWORD: 123123
       POSTGRES_DB: app
+    volumes:
+      - ./data/pg:/data/postgres
 
   redis:
     container_name: redis
