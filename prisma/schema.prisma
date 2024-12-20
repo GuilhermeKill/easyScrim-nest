@@ -5,27 +5,77 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgres"
-  url      = "postgresql://postgres:docker@localhost:5432/nest-clean"
+  provider = "postgresql"
+  url      = "postgresql://gui:123123@localhost:5432/app?schema=public"
+}
+
+enum Role {
+  ADMIN
+  PLAYER
+  COACH
+}
+
+enum Elo {
+  Ferro
+  Bronze
+  Prata
+  Ouro
+  Platina
+  Diamante
+  Master
+  GrandMaster
+  Challenger
 }
 
 model User {
-  id              Int     @id @default(autoincrement())
-  uu_id           String  @default(uuid())
-  avatar          String
-  name            String
-  email           String  @unique
-  password        String
-  description     String
-  riot_id         String
-  lane            String
-  riot_nick_name  String
+  id                 Int    @id @default(autoincrement())
+  uu_id              String @default(uuid())
+  avatar             String
+  name               String
+  email              String @unique
+  password           String
+  player_description String
+  riot_id            String
+  lane               String
+  riot_nick_name     String
+  team_id            String
+  role               Role
 
+  teamUsers Team_User[]
 
   @@map("users")
 }
 
+model Team {
+  id           Int    @id @default(autoincrement())
+  uu_id        String @default(uuid())
+  team_name    String
+
+  top_laner_id String?
+  jg_laner_id  String?
+  mid_laner_id String?
+  adc_laner_id String?
+  sup_laner_id String?
+  coach_id     String?
+  elo_team     Elo
+
+  teamUsers Team_User[]
+
+  @@map("teams")
+}
+
+model Team_User {
+  id      Int @id @default(autoincrement())
+  user_id Int
+  team_id Int
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+  Team   Team? @relation(fields: [teamId], references: [id])
+  teamId Int?
+}

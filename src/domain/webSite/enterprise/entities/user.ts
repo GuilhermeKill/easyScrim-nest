@@ -1,5 +1,6 @@
 import { Entity } from "src/core/entities/entity";
 import { UniqueEntityID } from "src/core/entities/unique-entity-id";
+import { Role } from '@prisma/client';
 
 export interface UserProps{
     avatar: string,
@@ -10,6 +11,7 @@ export interface UserProps{
     riot_nick_name: string,
     password: string,
     lane: string,
+    role: Role,
 }
 
 export class User extends Entity<UserProps>{
@@ -44,6 +46,10 @@ export class User extends Entity<UserProps>{
     
     get description(){
         return this.props.description
+    }
+
+    get role(){
+        return this.props.role
     }
 
 

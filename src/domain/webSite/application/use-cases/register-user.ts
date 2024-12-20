@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { UserRepository } from "../repositories/User-repository"
 import { HashGenerator } from "../cryptography/hash-generator";
 import { User } from "../../enterprise/entities/user";
+import { Role } from '@prisma/client';
 
 interface RegisterUserUseCaseRequest {
     avatar: string
@@ -12,7 +13,10 @@ interface RegisterUserUseCaseRequest {
     password: string,
     lane: string,
     description: string,
+    role: Role
 }
+
+
 
 @Injectable()
 export class RegisterUserUseCase{
@@ -21,6 +25,7 @@ export class RegisterUserUseCase{
         private hashGenerator: HashGenerator
     ) {}
 
+    
     async execute({
         avatar,
         name,
@@ -29,19 +34,23 @@ export class RegisterUserUseCase{
         riot_nick_name,
         password,
         lane,
-        description
-
-    }: RegisterUserUseCaseRequest): Promise<string>{
-
+        description,
+        role
+        
+    }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseRequest>{
+        
         const userWithSameEmail = 
-            await this.userRepository.findByEmail(email);
-
-        if(userWithSameEmail) {
-            return "usuário já existe"
-        }
+        await this.userRepository.findByEmail(email);
+        
     
+
+      
+        
         const hashedPassword = await this.hashGenerator.hash(password)
         
+
+        
+
         const user = User.create({
             avatar,
             name,
@@ -50,11 +59,18 @@ export class RegisterUserUseCase{
             riot_id,
             riot_nick_name,
             password: hashedPassword,
-            lane
+            lane,
+            role
         })
 
+
+
+
+      
         await this.userRepository.create(user);
+     
         
-        return user.toString()
+        return user
+        
     }
 }

@@ -12,6 +12,7 @@ import { UsePipes } from '@nestjs/common/decorators/core/use-pipes.decorator'
 import { RegisterUserUseCase } from 'src/domain/webSite/application/use-cases/register-user'
 import { Public } from '@/infra/auth/public'
 
+const RoleEnum = z.enum(['ADMIN', 'PLAYER', 'COACH']);
 
 const createAccountBodySchema = z.object({
     avatar: z.string(),
@@ -21,7 +22,8 @@ const createAccountBodySchema = z.object({
     riot_id: z.string(),
     riot_nick_name: z.string(),
     lane: z.string(),
-    description: z.string()
+    description: z.string(),
+    role: RoleEnum
 })
 
 type createAccountBodySchema = z.infer<typeof createAccountBodySchema>
@@ -35,24 +37,23 @@ export class CreateAcountController{
     @Post()
     @HttpCode(201)
     @UsePipes(new ZodValidationPipe(createAccountBodySchema))
-    
-    async handle(@Body() body: createAccountBodySchema) : Promise<{ message: string }>{
-        const { avatar ,name, email, password, riot_id, riot_nick_name, lane, description } = body
+    async handle(@Body() body: createAccountBodySchema){
+        const { avatar ,name, email, password, riot_id, riot_nick_name, lane, description, role } = body
 
-        const result = await this.registerUser.execute({
-            avatar,
-            name,
-            email,
-            password,
-            riot_id,
-            riot_nick_name,
-            lane,
-            description
-        })
+            const result = await this.registerUser.execute({
+                avatar,
+                name,
+                email,
+                password,
+                riot_id,
+                riot_nick_name,
+                lane,
+                description,
+                role
+            })
         
-
-        return {
-            message: "usuário criado com sucesso"
-        }
     }
 }
+
+
+

@@ -14,6 +14,7 @@ export class PrismaStudentMapper {
         password: raw.password,
         lane: raw.lane,
         description: raw.description,
+        role: raw.role
       },
         new UniqueEntityID(raw.uu_id),
     )
@@ -30,6 +31,7 @@ export class PrismaStudentMapper {
         password: user.password,
         lane: user.lane,
         description: user.description,
+        role: user.role
     }
   }
 }
